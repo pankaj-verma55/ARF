@@ -69,6 +69,8 @@ dependencies {
     // RecyclerView
     implementation ("androidx.recyclerview:recyclerview:1.3.2")
 
-    // Glide for image
+    // Glide
     implementation ("com.github.bumptech.glide:glide:4.16.0")
+//    refresh
+    implementation ("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 }

@@ -5,14 +5,18 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.airavatresearchfoundation.R
 import com.example.airavatresearchfoundation.data.Product
 import com.example.airavatresearchfoundation.databinding.ItemProductBinding
+import com.example.airavatresearchfoundation.ui.uidataclas.FavoriteManager
 
-class ProductAdapter(private val onItemClick: (Product) -> Unit) :
+class ProductAdapter(
+    private val onItemClick: (Product) -> Unit,
+    private val onFavoriteClick: (Product) -> Unit) :
     RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
     private val productList = ArrayList<Product>()
     private val filteredList = ArrayList<Product>()
-    fun setProducts(list: List<Product>) {
+    fun setProducts(list: MutableList<Product>) {
         Log.d("Adapter", "List size = ${list.size}")
         productList.clear()
         productList.addAll(list)
@@ -38,7 +42,7 @@ class ProductAdapter(private val onItemClick: (Product) -> Unit) :
         holder.binding.title.text = product.title
         holder.binding.price.text = "₹ ${product.price}"
         holder.binding.category.text = "Category: ${product.category}"
-        holder.binding.rating.text = "${product.rating}"
+        holder.binding.rating.text = String.format("%.1f", product.rating)
         holder.binding.root.setOnClickListener {
             onItemClick(product)
         }
@@ -46,6 +50,26 @@ class ProductAdapter(private val onItemClick: (Product) -> Unit) :
         Glide.with(holder.itemView.context)
             .load(product.thumbnail)
             .into(holder.binding.image)
+
+//        favourite product
+        val favoriteManager = FavoriteManager(holder.itemView.context)
+
+        if (favoriteManager.isFavorite(product.id)) {
+            holder.binding.favoriteIcon.setImageResource(R.drawable.star)
+        } else {
+            holder.binding.favoriteIcon.setImageResource(R.drawable.empty_star)
+        }
+
+        holder.binding.favoriteIcon.setOnClickListener {
+        val adapterPosition = holder.adapterPosition
+            if (adapterPosition == RecyclerView.NO_POSITION) return@setOnClickListener
+
+            val currentProduct = filteredList[adapterPosition]
+
+            onFavoriteClick(currentProduct)
+
+            notifyItemChanged(adapterPosition)
+        }
     }
 
     class ViewHolder(val binding: ItemProductBinding) :
@@ -71,5 +95,8 @@ class ProductAdapter(private val onItemClick: (Product) -> Unit) :
         }
 
         notifyDataSetChanged()
+    }
+    fun getCurrentList(): List<Product> {
+        return productList
     }
 }
