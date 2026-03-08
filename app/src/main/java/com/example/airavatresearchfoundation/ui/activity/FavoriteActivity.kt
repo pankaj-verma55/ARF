@@ -32,7 +32,12 @@ class FavoriteActivity : AppCompatActivity() {
         "smartphones",
         "laptops",
         "fragrances",
-        "skincare",
+        "beauty",
+        "fragrances",
+        "furniture",
+        "motorcycle",
+        "skin-care",
+        "sunglasses",
         "groceries"
     )
     override fun onCreate(savedInstanceState: Bundle?) {
