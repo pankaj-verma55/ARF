@@ -18,6 +18,7 @@
             android:id="@+id/image"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:layout_gravity="center_vertical"
             android:scaleType="centerCrop"
             android:src="@drawable/ic_launcher_background"/>
 
@@ -25,13 +26,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
+            android:layout_gravity="center_vertical"
             android:orientation="vertical"
             android:paddingStart="12dp">
 
             <TextView
                 android:id="@+id/title"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:ellipsize="end"
                 android:text="Product Title"
                 android:textStyle="bold"
                 android:textSize="16sp"/>
@@ -44,6 +48,37 @@
                 android:textColor="@color/black"
                 android:textSize="14sp"
                 android:layout_marginTop="4dp"/>
+
+            <TextView
+                android:id="@+id/category"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Category:"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:layout_marginTop="4dp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                >
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:src="@drawable/star"/>
+                <TextView
+                    android:id="@+id/rating"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="5.0"
+                    android:gravity="center"
+
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:layout_marginTop="4dp"/>
+            </LinearLayout>
+
 
         </LinearLayout>
 

@@ -13,6 +13,7 @@ class ProductViewModel @Inject constructor(
     private val _products = MutableLiveData<List<Product>>()
     val products: LiveData<List<Product>> = _products
 
+
     fun fetchProducts() {
 
         viewModelScope.launch {
@@ -25,4 +26,17 @@ class ProductViewModel @Inject constructor(
 
         }
     }
+    fun fetchProductsByCategory(category: String) {
+
+        viewModelScope.launch {
+
+            val response = repository.getProductsByCategory(category)
+
+            if (response.isSuccessful) {
+                _products.value = response.body()?.products
+            }
+
+        }
+    }
+
 }

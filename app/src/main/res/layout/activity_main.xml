@@ -5,7 +5,38 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".ui.activity.MainActivity">
+    <SearchView
+        android:id="@+id/searchProduct"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:queryHint="Search product"
+        android:iconifiedByDefault="false"
+        android:background="@drawable/search_bg"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/filterIcon"
+        app:layout_constraintStart_toStartOf="parent"/>
+    <ImageView
+        android:id="@+id/filterIcon"
+        android:layout_width="42dp"
+        android:layout_height="42dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/searchProduct"
+        app:layout_constraintBottom_toBottomOf="@+id/searchProduct"
+        android:src="@drawable/ic_filter"/>
+    <TextView
+        android:id="@+id/tvNoProduct"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Product not available"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="@+id/searchProduct"
+        app:layout_constraintTop_toBottomOf="@+id/searchProduct"
+        app:layout_constraintEnd_toEndOf="@+id/searchProduct"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -14,7 +45,8 @@
         android:padding="8dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/item_product"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchProduct"
+        android:layout_marginTop="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>

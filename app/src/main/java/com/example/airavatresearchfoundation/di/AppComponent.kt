@@ -1,6 +1,6 @@
 package com.example.airavatresearchfoundation.di
 
-import com.example.airavatresearchfoundation.MainActivity
+import com.example.airavatresearchfoundation.ui.activity.MainActivity
 import dagger.Component
 import javax.inject.Singleton
 

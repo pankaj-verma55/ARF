@@ -8,5 +8,7 @@ class ProductRepository @Inject constructor(
 ) {
 
     suspend fun getProducts() = apiService.getProducts()
+    suspend fun getProductsByCategory(category: String) =
+        apiService.getProductsByCategory(category)
 
 }
