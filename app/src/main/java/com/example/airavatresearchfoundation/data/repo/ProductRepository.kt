@@ -9,10 +9,8 @@ class ProductRepository @Inject constructor(
     private val apiService: ApiService
 ) {
 
-    suspend fun getProducts() = apiService.getProducts()
-
-    suspend fun getProductPaging(limit: Int, skip: Int): ProductItem {
-        return apiService.getProductPaging(limit, skip)
+    suspend fun getProducts(limit: Int, skip: Int): Response<ProductItem> {
+        return apiService.getProducts(limit, skip)
     }
     suspend fun getProductsByCategory(category: String) =
         apiService.getProductsByCategory(category)

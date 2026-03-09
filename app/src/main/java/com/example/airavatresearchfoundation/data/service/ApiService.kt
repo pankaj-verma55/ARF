@@ -14,14 +14,19 @@ interface ApiService {
 //        @Query("skip") skip: Int? = null
 //    ): Response<ProductItem>
 
-    @GET("products")
-    suspend fun getProductPaging(
-        @Query("limit") limit: Int,
-        @Query("skip") skip: Int
-    ): ProductItem
+//    @GET("products")
+//    suspend fun getProductPaging(
+//        @Query("limit") limit: Int,
+//        @Query("skip") skip: Int
+//    ): ProductItem
 
     @GET("products")
-    suspend fun getProducts(): Response<ProductItem>
+    suspend fun getProducts(
+        @Query("limit") limit: Int? = null,
+        @Query("skip") skip: Int? = null
+    ): Response<ProductItem>
+//    @GET("products")
+//    suspend fun getProducts(): Response<ProductItem>
 
     @GET("products/category/{category}")
     suspend fun getProductsByCategory(

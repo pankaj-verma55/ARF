@@ -16,14 +16,24 @@ class ProductAdapter(
     RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
     private val productList = ArrayList<Product>()
     private val filteredList = ArrayList<Product>()
-    fun setProducts(list: MutableList<Product>) {
+//    fun setProducts(list: MutableList<Product>) {
+//
+//        productList.clear()
+//        productList.addAll(list)
+//        filteredList.clear()
+//        filteredList.addAll(list)
+//        notifyDataSetChanged()
+//    }
+
+    fun setProducts(list: List<Product>) {
         Log.d("Adapter", "List size = ${list.size}")
         productList.clear()
         productList.addAll(list)
         filteredList.clear()
-        filteredList.addAll(list)
+        filteredList.addAll(productList)
         notifyDataSetChanged()
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 

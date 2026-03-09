@@ -48,7 +48,7 @@ class FavoriteActivity : AppCompatActivity() {
         (application as AiravatApplication).appComponent.inject(this)
         val factory = ProductViewModelFactory(repository)
         viewModel = ViewModelProvider(this, factory)[ProductViewModel::class.java]
-        viewModel.loadProducts()
+        viewModel.getProducts()
 
         adapter = ProductAdapter(onItemClick = { /* Handle click if needed */ },
             onFavoriteClick = { product ->
@@ -112,7 +112,7 @@ class FavoriteActivity : AppCompatActivity() {
             val selectedCategory = categories[selectedCategoryIndex]
 
             if (selectedCategory == "All") {
-                viewModel.fetchProducts()
+                viewModel.getProducts()
             } else {
                 viewModel.fetchProductsByCategory(selectedCategory)
             }

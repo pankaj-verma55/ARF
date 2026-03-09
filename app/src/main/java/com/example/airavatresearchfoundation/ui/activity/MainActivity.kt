@@ -1,5 +1,6 @@
 package com.example.airavatresearchfoundation.ui.activity
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
@@ -28,6 +29,7 @@ import javax.inject.Inject
 
 class MainActivity : AppCompatActivity() {
     private lateinit var viewModel: ProductViewModel
+
     @Inject
     lateinit var repository: ProductRepository
     private var selectedCategoryIndex = 0
@@ -49,7 +51,7 @@ class MainActivity : AppCompatActivity() {
     )
 
 
-    private lateinit var binding:ActivityMainBinding
+    private lateinit var binding: ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -89,17 +91,21 @@ class MainActivity : AppCompatActivity() {
                 val isSearching = binding.searchProduct.query.isNotEmpty()
                 val isFilteredCategory = categories[selectedCategoryIndex] != "All"
 
-                if (!viewModel.isLoading && !viewModel.isLastPage && !isSearching && !isFilteredCategory) {
+                if (!viewModel.isLoading && !viewModel.isLastPage && !isFilteredCategory) {
                     if (visibleItemCount + firstVisibleItemPosition >= totalItemCount
                         && firstVisibleItemPosition >= 0
                     ) {
-                        viewModel.loadProducts()
+                        if (!recyclerView.canScrollVertically(1)) {
+                            viewModel.getProducts(true)
+                        }
                     }
                 }
             }
         })
 
-        viewModel.loadProducts()
+        if (!binding.recyclerView.canScrollVertically(1)) {
+            viewModel.getProducts(true)
+        }
 
         viewModel.products.observe(this) {
             originalList = it
@@ -127,24 +133,60 @@ class MainActivity : AppCompatActivity() {
         })
         var selectedId = -1
 
+//        binding.priceSort.setOnClickListener {
+//
+//            if (selectedId == R.id.priceSort) {
+//
+//                // unselect
+//                binding.radioGroupSort.clearCheck()
+//                selectedId = -1
+//
+//                adapter.setProducts(originalList.toMutableList()) // restore original list
+//
+//            } else {
+//
+//                selectedId = R.id.priceSort
+//
+//                val sorted = adapter.getCurrentList().sortedByDescending { it.price }
+//                adapter.setProducts(sorted.toMutableList())
+//            }
+//        }
+
         binding.priceSort.setOnClickListener {
 
             if (selectedId == R.id.priceSort) {
 
-                // unselect
                 binding.radioGroupSort.clearCheck()
                 selectedId = -1
 
-                adapter.setProducts(originalList.toMutableList()) // restore original list
+                viewModel.isPriceSort = false
+                adapter.setProducts(originalList.toMutableList())
 
             } else {
 
                 selectedId = R.id.priceSort
 
-                val sorted = adapter.getCurrentList().sortedByDescending { it.price }
-                adapter.setProducts(sorted.toMutableList())
+                viewModel.sortByPrice()
             }
         }
+
+//        binding.ratingSort.setOnClickListener {
+//
+//            if (selectedId == R.id.ratingSort) {
+//
+//                binding.radioGroupSort.clearCheck()
+//                selectedId = -1
+//
+//                adapter.setProducts(originalList.toMutableList())
+//
+//            } else {
+//
+//                selectedId = R.id.ratingSort
+//
+//                val sorted = adapter.getCurrentList().sortedByDescending { it.rating }
+//                adapter.setProducts(sorted.toMutableList())
+//            }
+//        }
 
         binding.ratingSort.setOnClickListener {
 
@@ -153,14 +195,15 @@ class MainActivity : AppCompatActivity() {
                 binding.radioGroupSort.clearCheck()
                 selectedId = -1
 
+                viewModel.isRatingSort = false
                 adapter.setProducts(originalList.toMutableList())
 
             } else {
 
                 selectedId = R.id.ratingSort
 
-                val sorted = adapter.getCurrentList().sortedByDescending { it.rating }
-                adapter.setProducts(sorted.toMutableList())
+                viewModel.isRatingSort = true
+                viewModel.sortByRating()
             }
         }
 
@@ -176,10 +219,27 @@ class MainActivity : AppCompatActivity() {
             selectedCategoryIndex = 0
 
             viewModel.refreshProducts()
-            viewModel.loadProducts()
+            viewModel.getProducts(true)
+
+            binding.radioGroupSort.clearCheck()
+            selectedId = -1
+
+            binding.radioGroupSort.clearCheck()
+            selectedId = -1
+
+            viewModel.isRatingSort = false
+            viewModel.isPriceSort = false
 
 
             binding.swipeRefreshLayout.isRefreshing = false
+        }
+        viewModel.loading.observe(this) { isLoading ->
+
+            if (isLoading) {
+                binding.progressBar.visibility = View.VISIBLE
+            } else {
+                binding.progressBar.visibility = View.GONE
+            }
         }
 
 
@@ -210,7 +270,7 @@ class MainActivity : AppCompatActivity() {
             val selectedCategory = categories[selectedCategoryIndex]
 
             if (selectedCategory == "All") {
-                viewModel.loadProducts()
+                viewModel.getProducts()
             } else {
                 viewModel.fetchProductsByCategory(selectedCategory)
             }
@@ -221,6 +281,7 @@ class MainActivity : AppCompatActivity() {
         builder.show()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun showProductDialog(product: Product) {
 
         val dialog = Dialog(this)
@@ -242,6 +303,7 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    @SuppressLint("SetTextI18n")
     private fun checkProductAvailable(query: String) {
 
         if (adapter.itemCount == 0) {

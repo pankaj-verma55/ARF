@@ -10,28 +10,20 @@ class ProductViewModel @Inject constructor(
     private val repository: ProductRepository
 ) : ViewModel() {
 
+    var isRatingSort = false
+    var isPriceSort = false
     var skip = 0
     val limit = 20
     var isLoading = false
     var isLastPage = false
 
+    private val _loading = MutableLiveData<Boolean>()
+    val loading: LiveData<Boolean> = _loading
+
     private val productList = ArrayList<Product>()
     private val _products = MutableLiveData<List<Product>>()
     val products: LiveData<List<Product>> = _products
 
-
-    fun fetchProducts() {
-
-        viewModelScope.launch {
-
-            val response = repository.getProducts()
-
-            if (response.isSuccessful) {
-                _products.value = response.body()?.products
-            }
-
-        }
-    }
     fun fetchProductsByCategory(category: String) {
 
         viewModelScope.launch {
@@ -44,29 +36,48 @@ class ProductViewModel @Inject constructor(
 
         }
     }
-    fun loadProducts() {
 
-        if (isLoading || isLastPage) return
+
+    fun getProducts(isPagination: Boolean = false) {
+
+        if (isPagination && (isLoading || isLastPage)) return
 
         isLoading = true
+        _loading.postValue(true)
 
         viewModelScope.launch {
 
             try {
 
-                val response = repository.getProductPaging(limit, skip)
+                val response = repository.getProducts(limit, skip)
 
-                if (response.products.isNotEmpty()) {
+                if (response.isSuccessful) {
 
-                    productList.addAll(response.products)
+                    val body = response.body()
 
-                    _products.postValue(productList)
+                    if (body?.products?.isNotEmpty() == true) {
 
-                    skip += limit
-                }
+                        if (!isPagination) {
+                            productList.clear()
+                        }
 
-                if (skip >= response.total) {
-                    isLastPage = true
+                        productList.addAll(body.products)
+
+                        if (isRatingSort) {
+                            productList.sortByDescending { it.rating }
+                        }
+                        if (isPriceSort) {
+                            productList.sortByDescending { it.price }
+                        }
+
+                        _products.postValue(productList)
+
+                        skip += limit
+                    }
+
+                    if (skip >= (body?.total ?: 0)) {
+                        isLastPage = true
+                    }
                 }
 
             } catch (e: Exception) {
@@ -74,8 +85,8 @@ class ProductViewModel @Inject constructor(
             }
 
             isLoading = false
+            _loading.postValue(false)
         }
-
     }
 
     fun refreshProducts() {
@@ -84,8 +95,21 @@ class ProductViewModel @Inject constructor(
         isLastPage = false
         isLoading = false
         productList.clear()
+    }
+    fun sortByRating() {
+        isRatingSort = true
+        isPriceSort = false
 
-//        loadProducts()
+        productList.sortByDescending { it.rating }
+        _products.postValue(ArrayList(productList))
+    }
+
+    fun sortByPrice() {
+        isPriceSort = true
+        isRatingSort = false
+
+        productList.sortByDescending { it.price }
+        _products.postValue(ArrayList(productList))
     }
 
 
