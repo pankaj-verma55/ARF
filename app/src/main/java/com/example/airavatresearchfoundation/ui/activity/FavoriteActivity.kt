@@ -53,11 +53,11 @@ class FavoriteActivity : AppCompatActivity() {
         adapter = ProductAdapter(onItemClick = { /* Handle click if needed */ },
             onFavoriteClick = { product ->
                 val favoriteManager = FavoriteManager(this)
-                // Since we are in the Favorite screen, clicking usually means REMOVING
-                favoriteManager.removeFavorite(product.id)
-
-                // Refresh the list immediately so it disappears from the screen
-                loadFavorites()
+                if (favoriteManager.isFavorite(product.id)) {
+                    favoriteManager.removeFavorite(product.id)
+                } else {
+                    favoriteManager.addFavorite(product.id)
+                }
             })
 
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
